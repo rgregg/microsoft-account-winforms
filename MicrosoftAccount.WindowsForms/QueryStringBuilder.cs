@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicrosoftAccount
+namespace MicrosoftAccount.WindowsForms
 {
     public class QueryStringBuilder
     {
         private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
         public QueryStringBuilder()
         {
-            StartCharacter = '?';
+            StartCharacter = null;
             SeperatorCharacter = '&';
+            KeyValueJoinCharacter = '=';
         }
 
         public QueryStringBuilder(string key, string value)
-               : this()
         {
             this[key] = value;
         }
@@ -31,10 +31,11 @@ namespace MicrosoftAccount
             get { return parameters.Count > 0; }
         }
 
-        public char? StartCharacter{ get; set; }
+        public char? StartCharacter { get; set; }
 
         public char SeperatorCharacter { get; set; }
 
+        public char KeyValueJoinCharacter { get; set; }
 
         public string this[string key]
         {
@@ -76,11 +77,13 @@ namespace MicrosoftAccount
             var sb = new StringBuilder();
             foreach (var param in parameters)
             {
-                if ((StartCharacter != null) && (sb.Length > 0) && (sb[sb.Length - 1] != StartCharacter))
-                    sb.Append(StartCharacter.Value);
-                
+                if ((sb.Length == 0) && (null != StartCharacter))
+                    sb.Append(StartCharacter);
+                if ((sb.Length > 0) && (sb[sb.Length - 1] != StartCharacter))
+                    sb.Append(SeperatorCharacter);
+
                 sb.Append(param.Key);
-                sb.Append(SeperatorCharacter);
+                sb.Append('=');
                 sb.Append(Uri.EscapeDataString(param.Value));
             }
             return sb.ToString();
