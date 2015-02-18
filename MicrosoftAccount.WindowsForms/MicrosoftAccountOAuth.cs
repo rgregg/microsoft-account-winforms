@@ -27,15 +27,20 @@ namespace MicrosoftAccount.WindowsForms
             return tokens;
         }
 
-        private static async Task<AppTokenResult> RedeemAuthorizationCodeAsync(string clientId, string redirectUrl, string clientSecret, string authCode)
+        public static async Task<AppTokenResult> RedeemRefreshTokenAsync(string clientId, string clientSecret, string redirectUri, string refreshToken)
         {
-            QueryStringBuilder queryBuilder = new QueryStringBuilder();
+            var queryBuilder = new QueryStringBuilder();
             queryBuilder.Add("client_id", clientId);
-            queryBuilder.Add("redirect_uri", redirectUrl);
+            queryBuilder.Add("redirect_uri", redirectUri);
             queryBuilder.Add("client_secret", clientSecret);
-            queryBuilder.Add("code", authCode);
-            queryBuilder.Add("grant_type", "authorization_code");
+            queryBuilder.Add("refresh_token", refreshToken);
+            queryBuilder.Add("grant_type", "refresh_token");
 
+            return await PostToTokenEndPoint(queryBuilder);
+        }
+
+        private static async Task<AppTokenResult> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
+        {
             HttpWebRequest request = WebRequest.CreateHttp("https://login.live.com/oauth20_token.srf");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -47,7 +52,7 @@ namespace MicrosoftAccount.WindowsForms
 
             var response = await request.GetResponseAsync();
             var httpResponse = response as HttpWebResponse;
-            
+
             // TODO: better error handling
             if (httpResponse == null) return null;
             if (httpResponse.StatusCode != HttpStatusCode.OK) return null;
@@ -56,6 +61,18 @@ namespace MicrosoftAccount.WindowsForms
             var responseBody = await responseBodyStreamReader.ReadToEndAsync();
 
             return Newtonsoft.Json.JsonConvert.DeserializeObject<AppTokenResult>(responseBody);
+        }
+
+        private static async Task<AppTokenResult> RedeemAuthorizationCodeAsync(string clientId, string redirectUrl, string clientSecret, string authCode)
+        {
+            QueryStringBuilder queryBuilder = new QueryStringBuilder();
+            queryBuilder.Add("client_id", clientId);
+            queryBuilder.Add("redirect_uri", redirectUrl);
+            queryBuilder.Add("client_secret", clientSecret);
+            queryBuilder.Add("code", authCode);
+            queryBuilder.Add("grant_type", "authorization_code");
+
+            return await PostToTokenEndPoint(queryBuilder);
         }
 
 
