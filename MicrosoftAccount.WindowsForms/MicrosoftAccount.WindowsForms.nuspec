@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>OAuth Library for Microsoft Account</title>
+    <authors>rgregg</authors>
+    <owners>rgregg</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/rgregg/microsoft-account-winforms</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Windows Forms library for retrieving access tokens from Microsoft Account</description>
+    <releaseNotes>Fixing method signature of RedeemRefreshTokenAsync to not require a Redirect Uri.</releaseNotes>
+    <copyright></copyright>
+  </metadata>
+</package>
