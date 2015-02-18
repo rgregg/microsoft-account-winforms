@@ -27,11 +27,11 @@ namespace MicrosoftAccount.WindowsForms
             return tokens;
         }
 
-        public static async Task<AppTokenResult> RedeemRefreshTokenAsync(string clientId, string clientSecret, string redirectUri, string refreshToken)
+        public static async Task<AppTokenResult> RedeemRefreshTokenAsync(string clientId, string clientSecret, string refreshToken)
         {
             var queryBuilder = new QueryStringBuilder();
             queryBuilder.Add("client_id", clientId);
-            queryBuilder.Add("redirect_uri", redirectUri);
+            queryBuilder.Add("redirect_uri", FormMicrosoftAccountAuth.OAuthDesktopEndPoint);
             queryBuilder.Add("client_secret", clientSecret);
             queryBuilder.Add("refresh_token", refreshToken);
             queryBuilder.Add("grant_type", "refresh_token");
@@ -41,7 +41,7 @@ namespace MicrosoftAccount.WindowsForms
 
         private static async Task<AppTokenResult> PostToTokenEndPoint(QueryStringBuilder queryBuilder)
         {
-            HttpWebRequest request = WebRequest.CreateHttp("https://login.live.com/oauth20_token.srf");
+            HttpWebRequest request = WebRequest.CreateHttp(FormMicrosoftAccountAuth.OAuthMSATokenService);
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
 
