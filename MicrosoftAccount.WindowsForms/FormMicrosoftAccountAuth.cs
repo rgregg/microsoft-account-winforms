@@ -15,7 +15,8 @@ namespace MicrosoftAccount.WindowsForms
     public partial class FormMicrosoftAccountAuth : Form
     {
         public const string OAuthDesktopEndPoint = "https://login.live.com/oauth20_desktop.srf";
-        public const string OAuthMSATokenService = "https://login.live.com/oauth20_authorize.srf";
+        public const string OAuthMSAAuthorizeService = "https://login.live.com/oauth20_authorize.srf";
+        public const string OAuthMSATokenService = "https://login.live.com/oauth20_token.srf";
 
         #region Properties
         public string StartUrl { get; private set; }
@@ -155,7 +156,7 @@ namespace MicrosoftAccount.WindowsForms
                     throw new NotSupportedException("flow value not supported");
             }
 
-            startUrl = BuildUriWithParameters(OAuthMSATokenService, urlParam);
+            startUrl = BuildUriWithParameters(OAuthMSAAuthorizeService, urlParam);
             completeUrl = redirectUrl;
         }
 
