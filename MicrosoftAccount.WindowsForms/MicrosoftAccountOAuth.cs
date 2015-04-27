@@ -45,10 +45,11 @@ namespace MicrosoftAccount.WindowsForms
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
 
-            var stream = await request.GetRequestStreamAsync();
-            StreamWriter requestWriter = new StreamWriter(stream);
-            await requestWriter.WriteAsync(queryBuilder.ToString());
-            await requestWriter.FlushAsync();
+            using (StreamWriter requestWriter = new StreamWriter(await request.GetRequestStreamAsync()))
+            {
+                await requestWriter.WriteAsync(queryBuilder.ToString());
+                await requestWriter.FlushAsync();
+            }
 
             HttpWebResponse httpResponse;
             try
