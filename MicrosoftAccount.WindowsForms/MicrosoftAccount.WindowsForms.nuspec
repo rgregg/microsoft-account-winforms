@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/rgregg/microsoft-account-winforms</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Windows Forms library for retrieving access tokens from Microsoft Account</description>
-    <releaseNotes>Fixing method signature of RedeemRefreshTokenAsync to not require a Redirect Uri.</releaseNotes>
+    <releaseNotes>Ensuring http connections are released quickly.</releaseNotes>
     <copyright></copyright>
   </metadata>
 </package>
