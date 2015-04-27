@@ -205,15 +205,33 @@ namespace MicrosoftAccount.WindowsForms
             string requestUrl = "https://apis.live.net/v5.0/me?access_token=" + System.Uri.EscapeUriString(authToken);
             HttpWebRequest request = HttpWebRequest.CreateHttp(requestUrl);
 
-            WebResponse wr = await request.GetResponseAsync();
-            HttpWebResponse response = wr as HttpWebResponse;
+            HttpWebResponse response;
+            try
+            {
+
+                WebResponse wr = await request.GetResponseAsync();
+                response = wr as HttpWebResponse;
+            }
+            catch (WebException webex)
+            {
+                response = webex.Response as HttpWebResponse;
+            }
+
             if (null == response) return null;
 
-            Stream responseStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(responseStream);
+            UserObject user = null;
+            using (Stream responseStream = response.GetResponseStream())
+            {
+                StreamReader reader = new StreamReader(responseStream);
+                user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserObject>(await reader.ReadToEndAsync());
+            }
 
-            var user = Newtonsoft.Json.JsonConvert.DeserializeObject<UserObject>(await reader.ReadToEndAsync());
-            return user.Id;
+            response.Dispose();
+            
+            if (null != user)
+                return user.Id;
+            else
+                return null;
         }
 
 

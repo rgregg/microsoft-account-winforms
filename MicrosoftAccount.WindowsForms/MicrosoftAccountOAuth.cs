@@ -50,17 +50,40 @@ namespace MicrosoftAccount.WindowsForms
             await requestWriter.WriteAsync(queryBuilder.ToString());
             await requestWriter.FlushAsync();
 
-            var response = await request.GetResponseAsync();
-            var httpResponse = response as HttpWebResponse;
+            HttpWebResponse httpResponse;
+            try
+            {
+                var response = await request.GetResponseAsync();
+                httpResponse = response as HttpWebResponse;
+            }
+            catch (WebException webex)
+            {
+                httpResponse = webex.Response as HttpWebResponse;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             // TODO: better error handling
-            if (httpResponse == null) return null;
-            if (httpResponse.StatusCode != HttpStatusCode.OK) return null;
 
-            var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream());
-            var responseBody = await responseBodyStreamReader.ReadToEndAsync();
+            if (httpResponse == null) 
+                return null;
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<AppTokenResult>(responseBody);
+            if (httpResponse.StatusCode != HttpStatusCode.OK)
+            {
+                httpResponse.Dispose();
+                return null;
+            }
+
+            using (var responseBodyStreamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var responseBody = await responseBodyStreamReader.ReadToEndAsync();
+                var tokenResult = Newtonsoft.Json.JsonConvert.DeserializeObject<AppTokenResult>(responseBody);
+
+                httpResponse.Dispose();
+                return tokenResult;
+            }
         }
 
         private static async Task<AppTokenResult> RedeemAuthorizationCodeAsync(string clientId, string redirectUrl, string clientSecret, string authCode)
